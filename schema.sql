@@ -1,0 +1,26 @@
+DROP DATABASE IF EXISTS company_orgDB;
+CREATE DATABASE company_orgDB;
+USE company_orgDB;
+
+CREATE TABLE departments(
+  id INTEGER(10) AUTO_INCREMENT NOT NULL,
+  name VARCHAR(30) NOT NULL,
+  PRIMARY KEY (id)
+);
+
+CREATE TABLE role(
+  id INTEGER(10) AUTO_INCREMENT NOT NULL,
+  title VARCHAR(30) NOT NULL,
+  salary DECIMAL(10, 2) NOT NULL,
+  department_id INT NOT NULL,
+  PRIMARY KEY (id)
+);
+
+CREATE TABLE employee(
+  id INTEGER(11) AUTO_INCREMENT NOT NULL,
+  first_name VARCHAR(100) NOT NULL,
+  last_name VARCHAR(100) NOT NULL,
+  role_id INT NOT NULL,
+  manager_id INT NULL,
+  PRIMARY KEY (id)
+);
