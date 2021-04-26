@@ -4,7 +4,7 @@ USE company_orgDB;
 
 CREATE TABLE departments(
   id INTEGER(10) AUTO_INCREMENT NOT NULL,
-  name VARCHAR(30) NOT NULL,
+  department_name VARCHAR(30) NOT NULL,
   PRIMARY KEY (id)
 );
 
@@ -12,7 +12,7 @@ CREATE TABLE role(
   id INTEGER(10) AUTO_INCREMENT NOT NULL,
   title VARCHAR(30) NOT NULL,
   salary DECIMAL(10, 2) NOT NULL,
-  department_id INT NOT NULL,
+  department_id INT NOT NULL, -- will reference the department this role falls under
   PRIMARY KEY (id)
 );
 
@@ -25,7 +25,7 @@ CREATE TABLE employee(
   PRIMARY KEY (id)
 );
 
-INSERT INTO departments (name) 
+INSERT INTO departments (department_name) 
 VALUES ('IT'), ('HR'), ('Sales'), ('Marketing');
 
 SELECT * FROM departments;
@@ -38,4 +38,7 @@ INSERT INTO employee (first_name, last_name, role_id, manager_id)
 VALUES ('Ricky', 'Martin', 1), 
 ('Sam', 'Sheen', 2, 1);
 
+
+
 SELECT * FROM employee;
+
