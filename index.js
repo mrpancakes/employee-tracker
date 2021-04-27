@@ -5,7 +5,7 @@ const cTable = require('console.table');
 const VIEW_ALL_EMPL = "View ALL Employees";
 const EMPL_BY_DEPT = "View All Employees By Department";
 const EMPL_BY_MNGR = "View All Employees By Manager";
-const ADD_EMPL = "Add Employee";
+const ADD_EMPL = "Add New Employee";
 const REMOVE_EMPL = "Remove Employee";
 const UPDATE_EMPL_ROLE = "Update Employee Role";
 const UPDATE_EMPL_MNGR = "Update Employee Manager";
@@ -13,6 +13,9 @@ const EXIT = "Exit";
 
 let managersArr = [];
 let departmentsArr = [];
+let rolesArr = [];
+let roleIdArr = [];
+let employeesArr = [];
 
 const connection = mysql.createConnection({
     host: 'localhost',
@@ -22,13 +25,16 @@ const connection = mysql.createConnection({
 
     // Your username
     user: 'root',
-
     password: 'scottsqlthings',
     database: 'company_orgDB',
 });
 
 function start() {
-    
+    updateDeptArr();
+    updateMngrArr();
+    updateRolesArr();
+    updateEmplArr();
+
     inquirer.prompt([
         {
             name: 'queryOption',
@@ -43,18 +49,16 @@ function start() {
         switch (queryOption) {
             case VIEW_ALL_EMPL:
                 viewAllEmpl();
-                // call function that displays all employees and then starts the start() function again.
+                // call function that displays all employees and then starts the start() function over again.
                 break;
             case EMPL_BY_DEPT:
                 emplByDept();
                 break;
             case EMPL_BY_MNGR:
-                // Call function with inquirer prompt that lists all managers for you to choose from, .then(answers) will then have it's own switch statement and will display employees based on the manager the user chose.
-                // How can the answer choices pull the Managers from the table and list them as the answer choices?
                 emplByMngr();
                 break;
             case ADD_EMPL:
-                // Call function with inquirer prompt that has the user fill out the employee info, then .then() will add this emplyoee to the employee table
+                addEmpl();
                 break;
             case REMOVE_EMPL:
                 // Call function with inquirer prompt that lists all employees for you to choose from, the .then() will delete the user's choice from the employee table.
@@ -72,12 +76,11 @@ function start() {
                 console.log('Please select an option');
                 process.exit(1);
         }
-
     })
 };
 
 const viewAllEmpl = () => {
-    connection.query('SELECT * FROM employee', (err, res) => {
+    connection.query('SELECT first_name, last_name, title, salary, department_name FROM employee INNER JOIN role ON employee.role_id = role.id INNER JOIN departments ON role.department_id = departments.id', (err, res) => {
         if (err) throw err;
         const table = cTable.getTable(res);
         console.log(table); // Later, need to join table rows for title, department, salary, and manager name
@@ -131,9 +134,6 @@ const emplByMngr = () => {
         JOIN employee m
         ON (e.manager_id = m.id)
         WHERE concat(m.first_name, ' ', m.last_name) = '${mngrName}'`,
-            // {
-            //     m.first_name = mngrName
-            // },
             (err, res) => {
                 if (err) throw err;
                 const table = cTable.getTable(res);
@@ -143,16 +143,65 @@ const emplByMngr = () => {
     });
 };
 
+const addEmpl = () => {
+    connection.query('SELECT id as role_id, title, salary FROM role', (err, res) => {
+        const role = res.map(({ role_id, title, salary}) =>({
+            value: role_id,
+            title: `${title}`,
+            salary: `${salary}`
+        }));
+
+        console.table(res);
+        employeeRoles(role);
+    });
+};
+
+const employeeRoles = (role) => {
+    inquirer.prompt([
+    {
+      type: "input",
+      name: "firstName",
+      message: "New Employee First Name: "
+    },
+    {
+      type: "input",
+      name: "lastName",
+      message: "New Employee Last Name: "
+    },
+    {
+      type: "list",
+      name: "roleId",
+      message: "Select Role ID (refer to table above): ",
+      choices: role
+    }
+  ]).then(answer => { 
+      connection.query('INSERT INTO employee SET ?',{
+        first_name: answer.firstName,
+        last_name: answer.lastName,
+        role_id: answer.roleId
+      },(err, res)=>{
+        if(err) throw err;
+        console.log(res);
+        start();
+    });
+  });
+};
+
+
+
 const updateDeptArr = () => {
+    departmentsArr = [];
     connection.query('SELECT * FROM departments', (err, res) => {
         if (err) throw err;
         res.forEach(department => {
             departmentsArr.push(department.department_name)
         });
     });
+
 };
 
 const updateMngrArr = () => {
+    managersArr = [];
     connection.query(`SELECT e.id AS 'EmpId' , e.first_name , e.last_name ,
     m.id AS manager_id, concat(m.first_name, ' ', m.last_name) AS mananger_fullname
     FROM employee e
@@ -162,11 +211,30 @@ const updateMngrArr = () => {
         for (let i = 0; i < res.length; i++) {
             managersArr.push(res[i].mananger_fullname);
         }
-        console.log(managersArr);
     });
 };
 
+const updateRolesArr = () => {
+    rolesArr = [];
+    connection.query('SELECT title FROM role', (err, res) => {
+        if (err) throw err;
+        res.forEach(role => {
+            rolesArr.push(role.title);
+        });
+    });
+};
+
+const updateEmplArr = () => {
+    employeesArr = [];
+    employeesArr.push('None');
+    connection.query(`SELECT concat(first_name, ' ', last_name) AS full_name FROM company_orgDB.employee`, (err, res) => {
+        if (err) throw err;
+        res.forEach(empl => {
+            employeesArr.push(empl.full_name);
+        });
+    });
+}
+
 
 start();
-updateDeptArr();
-updateMngrArr();
+
