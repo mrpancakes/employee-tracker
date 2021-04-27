@@ -32,13 +32,28 @@ SELECT * FROM departments;
 
 
 INSERT INTO role (title, salary, department_id)
-VALUES ('Senior Digital Marketer', '90000', 4), ('Junior Digital Marketer', '70000', 4); -- Will need a conditional to insert the corresponding dept_id based on the dept Name someone selects in the terminal
+VALUES ('Senior Digital Marketer', '90000', 4), ('Junior Digital Marketer', '70000', 4), ('HR Manager', '90000', 2), ('HR Associate', '65000', 2), ('IT Manager', '150000', 1), ('IT Associate', '80000', 1), ('Sales Manager', '100000', 3), ('Sales Associate', '75000', 3) ; -- Will need a conditional to insert the corresponding dept_id based on the dept Name someone selects in the terminal
 
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
-VALUES ('Ricky', 'Martin', 1), 
-('Sam', 'Sheen', 2, 1);
-
-
+VALUES ('Ricky', 'Martin', 1, NULL), 
+('Sam', 'Sheen', 2, 1),
+('Darla', 'Smith', 3, NULL),
+;
 
 SELECT * FROM employee;
+
+
+-- Inner joining Department name into the Roles, and then the Employee table
+
+USE company_orgDB;
+
+SELECT * FROM role;
+SELECT * FROM employee;
+SELECT * from departments;
+
+SELECT first_name, last_name, title, department_name
+FROM employee
+INNER JOIN role ON employee.role_id = role.id
+INNER JOIN departments ON role.department_id = departments.id
+
 

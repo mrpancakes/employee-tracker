@@ -29,6 +29,7 @@ const connection = mysql.createConnection({
 
 function start() {
     updateDeptArr();
+    updateMngrArr();
     inquirer.prompt([
         {
             name: 'queryOption',
@@ -47,11 +48,11 @@ function start() {
                 break;
             case EMPL_BY_DEPT:
                 emplByDept();
-                // Call function with inquirer prompt that lists all departments for you to choose from, .then(answers) will then have it's own switch statement and will display employees based on the department the user chose.
                 break;
             case EMPL_BY_MNGR:
                 // Call function with inquirer prompt that lists all managers for you to choose from, .then(answers) will then have it's own switch statement and will display employees based on the manager the user chose.
                 // How can the answer choices pull the Managers from the table and list them as the answer choices?
+
                 break;
             case ADD_EMPL:
                 // Call function with inquirer prompt that has the user fill out the employee info, then .then() will add this emplyoee to the employee table
@@ -76,7 +77,6 @@ function start() {
     })
 };
 
-
 const viewAllEmpl = () => {
     connection.query('SELECT * FROM employee', (err, res) => {
         if (err) throw err;
@@ -97,21 +97,67 @@ const emplByDept = () => {
         }
     ]).then(answers => {
         const { deptName } = answers;
-        // We need to first join columns in tables before we can query/display a result
-        connection.query('SELECT * FROM employee WHERE ............', (err, res) => {
-            if (err) throw err;
-            const table = cTable.getTable(res);
-            console.log(table); 
-            start();
-        })
-    })
+        connection.query(`
+        SELECT first_name, last_name, title, salary, department_name 
+        FROM employee 
+        INNER JOIN role ON employee.role_id = role.id 
+        INNER JOIN departments ON role.department_id = departments.id 
+        WHERE ?`,
+            {
+                department_name: deptName
+            },
+            (err, res) => {
+                if (err) throw err;
+                const table = cTable.getTable(res);
+                console.log(table);
+                start();
+            });
+    });
+};
+
+const emplByMngr = () => {
+
+    inquirer.prompt([
+        {
+            name: 'deptName',
+            type: 'list',
+            message: 'Select a department to view their employees',
+            choices: departmentsArr
+        }
+    ]).then(answers => {
+        const { deptName } = answers;
+        connection.query(`
+        SELECT first_name, last_name, title, salary, department_name 
+        FROM employee 
+        INNER JOIN role ON employee.role_id = role.id 
+        INNER JOIN departments ON role.department_id = departments.id 
+        WHERE ?`,
+            {
+                department_name: deptName
+            },
+            (err, res) => {
+                if (err) throw err;
+                const table = cTable.getTable(res);
+                console.log(table);
+                start();
+            });
+    });
 };
 
 const updateDeptArr = () => {
     connection.query('SELECT * FROM departments', (err, res) => {
         if (err) throw err;
         res.forEach(department => {
-            departmentsArr.push(department.name)
+            departmentsArr.push(department.department_name)
+        });
+    });
+};
+
+const updateMngrArr = () => {
+    connection.query('SELECT * FROM departments', (err, res) => {
+        if (err) throw err;
+        res.forEach(department => {
+            departmentsArr.push(department.department_name)
         });
     });
 };
