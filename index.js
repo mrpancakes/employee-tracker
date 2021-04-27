@@ -28,8 +28,7 @@ const connection = mysql.createConnection({
 });
 
 function start() {
-    updateDeptArr();
-    updateMngrArr();
+    
     inquirer.prompt([
         {
             name: 'queryOption',
@@ -52,7 +51,7 @@ function start() {
             case EMPL_BY_MNGR:
                 // Call function with inquirer prompt that lists all managers for you to choose from, .then(answers) will then have it's own switch statement and will display employees based on the manager the user chose.
                 // How can the answer choices pull the Managers from the table and list them as the answer choices?
-
+                emplByMngr();
                 break;
             case ADD_EMPL:
                 // Call function with inquirer prompt that has the user fill out the employee info, then .then() will add this emplyoee to the employee table
@@ -119,22 +118,22 @@ const emplByMngr = () => {
 
     inquirer.prompt([
         {
-            name: 'deptName',
+            name: 'mngrName',
             type: 'list',
             message: 'Select a department to view their employees',
-            choices: departmentsArr
+            choices: managersArr
         }
-    ]).then(answers => {
-        const { deptName } = answers;
-        connection.query(`
-        SELECT first_name, last_name, title, salary, department_name 
-        FROM employee 
-        INNER JOIN role ON employee.role_id = role.id 
-        INNER JOIN departments ON role.department_id = departments.id 
-        WHERE ?`,
-            {
-                department_name: deptName
-            },
+    ]).then(answer => {
+        const { mngrName } = answer;
+        connection.query(`SELECT e.id AS 'EmpId' , e.first_name , e.last_name ,
+        m.id AS manager_id, concat(m.first_name, ' ', m.last_name) AS mananger_fullname
+        FROM employee e
+        JOIN employee m
+        ON (e.manager_id = m.id)
+        WHERE concat(m.first_name, ' ', m.last_name) = '${mngrName}'`,
+            // {
+            //     m.first_name = mngrName
+            // },
             (err, res) => {
                 if (err) throw err;
                 const table = cTable.getTable(res);
@@ -154,12 +153,20 @@ const updateDeptArr = () => {
 };
 
 const updateMngrArr = () => {
-    connection.query('SELECT * FROM departments', (err, res) => {
+    connection.query(`SELECT e.id AS 'EmpId' , e.first_name , e.last_name ,
+    m.id AS manager_id, concat(m.first_name, ' ', m.last_name) AS mananger_fullname
+    FROM employee e
+    JOIN employee m
+    ON (e.manager_id = m.id)`, (err, res) => {
         if (err) throw err;
-        res.forEach(department => {
-            departmentsArr.push(department.department_name)
-        });
+        for (let i = 0; i < res.length; i++) {
+            managersArr.push(res[i].mananger_fullname);
+        }
+        console.log(managersArr);
     });
 };
 
+
 start();
+updateDeptArr();
+updateMngrArr();
