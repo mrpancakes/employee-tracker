@@ -79,7 +79,7 @@ function start() {
                 // Call function with inquirer prompt that lists all employees for you to choose from, the .then() will delete the user's choice from the employee table.
                 break;
             case UPDATE_EMPL_ROLE:
-                // Call function with inquirer prompt that lists all employees for you to choose from, then change their role (give them choices to pick from)
+                updateRole();
                 break;
             case UPDATE_EMPL_MNGR:
                 // Call function with inquirer prompt that lists all employees for you to choose from, then change their manager (give them choices to pick from)
@@ -302,9 +302,57 @@ const addRoleDept = (dept) => {
     });
 };
 
+const updateRole = () => {
+    connection.query('SELECT id as role_id, title, salary FROM role', (err, res) => {
+        const role = res.map(({ role_id, title, salary }) => ({
+            value: role_id,
+            title: `${title}`,
+            salary: `${salary}`
+        }));
+        console.table(res);
+        updateRolePrompt(role);
+    });
+};
 
 
+const updateRolePrompt = (role) => {
 
+    inquirer.prompt([
+        {
+            name: 'employeeName',
+            type: 'list',
+            message: 'Whose role do you want to update?',
+            choices: employeesArr
+        },
+        {
+            name: 'roleId',
+            type: 'list',
+            message: 'What is their new role ID? Refer to the table above.',
+            choices: role
+        },
+    ]).then(answers => {
+        const nameArr = answers.employeeName.split(" ");
+        let firstName = nameArr[0];
+        let lastName = nameArr[1];
+
+        connection.query(`
+        UPDATE employee
+        set ?
+        WHERE ?
+        AND ?`
+            ,
+            [
+                { role_id: answers.roleId },
+                { first_name: firstName },
+                { last_name: lastName }
+            ],
+            (err, res) => {
+                if (err) throw err;
+                console.log(`${firstName}'s role has been updated!`);
+                start();
+            });
+    });
+};
 
 
 const updateDeptArr = () => {

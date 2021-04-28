@@ -36,7 +36,7 @@ VALUES ('Senior Digital Marketer', '90000', 4), ('Junior Digital Marketer', '700
 
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
 VALUES ('Ricky', 'Martin', 1, NULL), 
-('Sam', 'Sheen', 2, 1), -- Rickty is Sam's Manager
+('Sam', 'Sheen', 2, 1), -- Ricky is Sam's Manager
 ('Darla', 'Smith', 3, NULL),
 ('Josh', 'Banning', 4, 3) -- Darla is Josh's Manager
 ;
