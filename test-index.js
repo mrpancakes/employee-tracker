@@ -202,7 +202,6 @@ const employeeRoles = (role) => {
 };
 
 
-
 const updateDeptArr = () => {
     departmentsArr = [];
     connection.query('SELECT * FROM departments', (err, res) => {

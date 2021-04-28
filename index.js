@@ -7,9 +7,9 @@ const VIEW_ALL_DEPTS = "View All Departments"
 const VIEW_ALL_ROLES = "View All Roles"
 const EMPL_BY_DEPT = "View All Employees By Department";
 const EMPL_BY_MNGR = "View All Employees By Manager";
-
 const ADD_EMPL = "Add New Employee";
 const ADD_DEPT = "Add New Department";
+const ADD_ROLE = "Add New Role";
 const REMOVE_EMPL = "Remove Employee";
 const UPDATE_EMPL_ROLE = "Update Employee Role";
 const UPDATE_EMPL_MNGR = "Update Employee Manager";
@@ -44,7 +44,7 @@ function start() {
             name: 'queryOption',
             type: 'list',
             message: 'Choose an option!',
-            choices: [VIEW_ALL_EMPL, VIEW_ALL_DEPTS, VIEW_ALL_ROLES, EMPL_BY_DEPT, EMPL_BY_MNGR, ADD_EMPL, ADD_DEPT, REMOVE_EMPL, UPDATE_EMPL_ROLE, UPDATE_EMPL_MNGR, EXIT]
+            choices: [VIEW_ALL_EMPL, VIEW_ALL_DEPTS, VIEW_ALL_ROLES, EMPL_BY_DEPT, EMPL_BY_MNGR, ADD_EMPL, ADD_DEPT, ADD_ROLE, REMOVE_EMPL, UPDATE_EMPL_ROLE, UPDATE_EMPL_MNGR, EXIT]
         }
     ]).then(answers => {
 
@@ -71,6 +71,9 @@ function start() {
                 break;
             case ADD_DEPT:
                 addDept();
+                break;
+            case ADD_ROLE:
+                addRole();
                 break;
             case REMOVE_EMPL:
                 // Call function with inquirer prompt that lists all employees for you to choose from, the .then() will delete the user's choice from the employee table.
@@ -249,6 +252,59 @@ const addDept = () => {
             });
     });
 };
+
+
+const addRole = () => {
+    connection.query('SELECT id as dept_id, department_name FROM departments', (err, res) => {
+        // console.table(res);
+        const dept = res.map(({ dept_id, department_name }) => ({
+            value: dept_id,
+            department_name,
+        }));
+
+        console.table(res);
+        addRoleDept(dept);
+    });
+};
+
+
+const addRoleDept = (dept) => {
+    inquirer.prompt([
+        {
+            type: "input",
+            name: "title",
+            message: "Role Name: "
+        },
+        {
+            type: "number",
+            name: "salary",
+            message: "Input Salary, no commas or spaces:"
+        },
+        {
+            type: "list",
+            name: "department_id",
+            message: "Select Department ID (refer to table above): ",
+            choices: dept
+        },
+
+    ]).then(answer => {
+        console.log(answer)
+        connection.query('INSERT INTO role SET ?',
+            {
+                title: answer.title,
+                salary: answer.salary,
+                department_id: answer.department_id
+            },
+            (err, res) => {
+                if (err) throw err;
+                start();
+            });
+    });
+};
+
+
+
+
 
 
 const updateDeptArr = () => {
