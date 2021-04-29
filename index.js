@@ -113,7 +113,7 @@ function start() {
 };
 
 const viewAllEmpl = () => {
-    let query = `SELECT employee.id, employee.first_name, employee.last_name, role.title, departments.department_name AS department, role.salary, CONCAT(manager.first_name, ' ', manager.last_name) AS manager FROM employee LEFT JOIN role ON employee.role_id = role.id LEFT JOIN departments ON departments.id = role.department_id LEFT JOIN employee manager ON manager.id = employee.manager_id`;
+    let query = `SELECT employee.id, employee.first_name AS 'First Name', employee.last_name AS 'Last Name', role.title as 'Job Title', departments.department_name AS Department, role.salary AS Salary, CONCAT(manager.first_name, ' ', manager.last_name) AS Manager FROM employee LEFT JOIN role ON employee.role_id = role.id LEFT JOIN departments ON departments.id = role.department_id LEFT JOIN employee manager ON manager.id = employee.manager_id`;
     connection.query(query, (err, res) => {
         if (err) throw err;
         console.log(' ');
@@ -126,7 +126,7 @@ const viewAllEmpl = () => {
 }
 
 const viewAllDepts = () => {
-    let query = `SELECT department_name AS departments FROM departments`;
+    let query = `SELECT department_name AS Departments FROM Departments`;
     connection.query(query, (err, res) => {
         if (err) throw err;
         // console.log(' ');
@@ -139,7 +139,7 @@ const viewAllDepts = () => {
 };
 
 const viewAllRoles = () => {
-    let query = `SELECT title, salary, department_name FROM role INNER JOIN departments ON department_id = departments.id`;
+    let query = `SELECT title AS 'Job Title', salary AS 'Salary', department_name AS 'Department' FROM role INNER JOIN departments ON department_id = departments.id`;
     connection.query(query, (err, res) => {
         if (err) throw err;
         console.log(' ');
@@ -163,7 +163,7 @@ const emplByDept = () => {
     ]).then(answers => {
         const { deptName } = answers;
         connection.query(`
-        SELECT employee.id, employee.first_name, employee.last_name, role.title, departments.department_name AS department, role.salary, CONCAT(manager.first_name, ' ', manager.last_name) AS manager_name FROM employee LEFT JOIN role ON employee.role_id = role.id LEFT JOIN departments ON departments.id = role.department_id LEFT JOIN employee manager ON manager.id = employee.manager_id 
+        SELECT employee.id, employee.first_name AS 'First Name', employee.last_name AS 'Last Name', role.title as 'Job Title', departments.department_name AS Department, role.salary AS Salary, CONCAT(manager.first_name, ' ', manager.last_name) AS Manager FROM employee LEFT JOIN role ON employee.role_id = role.id LEFT JOIN departments ON departments.id = role.department_id LEFT JOIN employee manager ON manager.id = employee.manager_id 
         WHERE ?`,
             {
                 department_name: deptName
@@ -192,7 +192,7 @@ const emplByMngr = () => {
         }
     ]).then(answer => {
         const { mngrName } = answer;
-        connection.query(`SELECT employee.id, employee.first_name, employee.last_name, role.title, departments.department_name AS department, role.salary, CONCAT(manager.first_name, ' ', manager.last_name) AS manager_name FROM employee LEFT JOIN role ON employee.role_id = role.id LEFT JOIN departments ON departments.id = role.department_id LEFT JOIN employee manager ON manager.id = employee.manager_id
+        connection.query(`SELECT employee.id, employee.first_name AS 'First Name', employee.last_name AS 'Last Name', role.title as 'Job Title', departments.department_name AS Department, role.salary AS Salary, CONCAT(manager.first_name, ' ', manager.last_name) AS Manager FROM employee LEFT JOIN role ON employee.role_id = role.id LEFT JOIN departments ON departments.id = role.department_id LEFT JOIN employee manager ON manager.id = employee.manager_id
         WHERE CONCAT(manager.first_name, ' ', manager.last_name) = '${mngrName}'`,
             (err, res) => {
                 if (err) throw err;
@@ -287,10 +287,10 @@ const addDept = () => {
 // ADDING A NEW ROLE
 
 const addRole = () => {
-    connection.query('SELECT id as dept_id, department_name FROM departments', (err, res) => {
+    connection.query(`SELECT id as Dept_ID, department_name FROM departments`, (err, res) => {
         // console.table(res);
-        const dept = res.map(({ dept_id, department_name }) => ({
-            value: dept_id,
+        const dept = res.map(({ Dept_ID, department_name }) => ({
+            value: Dept_ID,
             department_name,
         }));
 
@@ -315,7 +315,7 @@ const deptNameForNewRole = (dept) => {
         {
             type: "list",
             name: "department_id",
-            message: "Which department does the role fall under?",
+            message: "What's the Department ID for this role? Refer to the table above.",
             choices: dept
         },
 
@@ -351,7 +351,7 @@ const updateRole = () => {
         {
             name: 'roleName',
             type: 'list',
-            message: 'What is their new role ID? Refer to the table above.',
+            message: 'What is their new role?',
             choices: rolesArr
         },
     ]).then(answers => {
