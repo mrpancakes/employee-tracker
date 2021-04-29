@@ -84,7 +84,7 @@ function start() {
                 emplByMngr();
                 break;
             case ADD_EMPL:
-                addEmpl(); // Still working on getting a Manager field
+                addEmpl();
                 break;
             case ADD_DEPT:
                 addDept();
@@ -94,7 +94,6 @@ function start() {
                 break;
             case REMOVE_EMPL:
                 deleteEmpl();
-                // Call function with inquirer prompt that lists all employees for you to choose from, the .then() will delete the user's choice from the employee table.
                 break;
             case UPDATE_EMPL_ROLE:
                 updateRole();
@@ -120,7 +119,7 @@ const viewAllEmpl = () => {
         console.log(` ALL EMPLOYEES:`);
         console.log(' ');
         const table = cTable.getTable(res);
-        console.log(table); // Later, need to join table rows for title, department, salary, and manager name
+        console.log(table);
         start();
     });
 }
@@ -129,8 +128,6 @@ const viewAllDepts = () => {
     let query = `SELECT department_name AS Departments FROM Departments`;
     connection.query(query, (err, res) => {
         if (err) throw err;
-        // console.log(' ');
-        // console.log(` ALL DEPARTMENTS:`);
         console.log(' ');
         const table = cTable.getTable(res);
         console.log(table);
@@ -288,7 +285,6 @@ const addDept = () => {
 
 const addRole = () => {
     connection.query(`SELECT id as Dept_ID, department_name FROM departments`, (err, res) => {
-        // console.table(res);
         const dept = res.map(({ Dept_ID, department_name }) => ({
             value: Dept_ID,
             department_name,

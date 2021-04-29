@@ -4,22 +4,40 @@
 
 ## Description
 
-The purpose of this application is for someone to easily create notes, with the ability to view and delete existing note entries.
+The purpose of this application is to create a content management system for a company's employees using Node and MySQL.
 
-I used the following npm packages to built this application:
-* Express
-* uuid
+I used the following npm packages to build this application:
+* inquirer
+* mysql
+* console.table
 
 ## Details
 
-* By clicking Get Started on the home screen, you're taken to the Notes page.
-* You begin by typing the note title and body. Once both fields contain text, the save icon in the top-right will appear.
-* When you save your note, it appears in the left-hand column where you can eithe click it to see the note body, or delete it.
+### Starting The App
 
+1) Copy the code from the schema.sql file and run it in MySQLWorkbench (or another comparable program).
+
+2) Run the following command to start the application:
+    
+        node index.js
+
+### Using The App
+
+You have the following options to choose from once the app is running:
+* View All Employees
+* View All Departments
+* View All Roles
+* View All Employees By Department
+* View All Employee by Manager
+* Add New Employee
+* Add New Department
+* Add New Role
+* Remove Employee
+* Update Employee Role
 
 ## Live App
 
-You can view a video walkthrough of the application [here](https://immense-reaches-36582.herokuapp.com/).
+You can view a video walkthrough of the application [here](https://www.youtube.com/watch?v=hBJVEpdh234).
 
 ![Application Preview](./images/app.gif)
 
