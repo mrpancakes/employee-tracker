@@ -4,7 +4,7 @@
 
 ## Description
 
-The purpose of this application is to create a content management system for a company's employees using Node and MySQL.
+The purpose of this application is to create a content management system for a company's employee database using Node and MySQL.
 
 I used the following npm packages to build this application:
 * inquirer
@@ -17,7 +17,7 @@ I used the following npm packages to build this application:
 
 1) Copy the code from the schema.sql file and run it in MySQLWorkbench (or another comparable program).
 
-2) Run the following command to start the application:
+2) Run the following command in your terminal to start the application:
     
         node index.js
 
@@ -28,7 +28,7 @@ You have the following options to choose from once the app is running:
 * View All Departments
 * View All Roles
 * View All Employees By Department
-* View All Employee by Manager
+* View All Employees by Manager
 * Add New Employee
 * Add New Department
 * Add New Role

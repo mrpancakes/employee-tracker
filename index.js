@@ -352,8 +352,8 @@ const updateRole = () => {
         },
     ]).then(answers => {
 
-        const roleAnswerArr = answers.roleName.split(" ");
-        const roleId = roleAnswerArr[0];
+        const roleAnswerArr = answers.roleName.split(" "); // take the roleName answer, and split it into an array like: ["1", "Senior", "Digital", "Manager"]
+        const roleId = roleAnswerArr[0]; // Takes the array we just made, and chooses 
 
         console.log(roleId);
 
