@@ -4,7 +4,7 @@
 
 ## Description
 
-The purpose of this application is to create a content management system for a company's employee database using Node and MySQL.
+The purpose of this application is to create a command-line content management system for a company's employee database using Node and MySQL.
 
 I used the following npm packages to build this application:
 * inquirer
